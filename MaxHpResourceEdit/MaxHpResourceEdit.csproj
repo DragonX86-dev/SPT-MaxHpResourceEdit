@@ -14,9 +14,9 @@
     </Target>
 
     <Target Name="CopyCustomContent" AfterTargets="AfterBuild">
-        <Copy SourceFiles="bin\$(Configuration)\net9.0\$(AssemblyName).dll"
+        <Copy SourceFiles="bin\$(Configuration)\$(TargetFramework)\$(AssemblyName).dll"
               DestinationFolder="./build/SPT/user/mods/$(AssemblyName)/" />
-        <Copy SourceFiles="bin\$(Configuration)\net9.0\config.json"
+        <Copy SourceFiles="bin\$(Configuration)\$(TargetFramework)\config.json"
               DestinationFolder="./build/SPT/user/mods/$(AssemblyName)/" />
     </Target>
 
