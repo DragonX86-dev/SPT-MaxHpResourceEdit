@@ -2,6 +2,7 @@
 using SPTarkov.DI.Annotations;
 using SPTarkov.Server.Core.DI;
 using SPTarkov.Server.Core.Helpers;
+using SPTarkov.Server.Core.Models.Common;
 using SPTarkov.Server.Core.Models.Logging;
 using SPTarkov.Server.Core.Models.Utils;
 using SPTarkov.Server.Core.Servers;
@@ -18,19 +19,19 @@ public class RestoreTheOldNumberOfMedicalUsesExtension(
     {
         var templates = databaseServer.GetTables().Templates;
         var pathToMod = modHelper.GetAbsolutePathToModFolder(Assembly.GetExecutingAssembly());
-        var items = modHelper.GetJsonDataFromFile<ItemConfig[]>(pathToMod, "config.json");
+        var config = modHelper.GetJsonDataFromFile<Dictionary<MongoId, int>>(pathToMod, "config.json");
         
         logger.LogWithColor("[RestoreTheOldNumberOfMedicalUses] The mod is loaded.", LogTextColor.Green);
 
-        foreach (var item in items)
+        foreach (var (key, value) in config.ToList())
         {
-            if (templates.Items[item.MongoId].Properties is null)
+            if (templates.Items[key].Properties is null)
             {
-                logger.Error($"[RestoreTheOldNumberOfMedicalUses] Item {item.MongoId} has no properties");
+                logger.Error($"[RestoreTheOldNumberOfMedicalUses] Item {key} has no properties");
                 continue;
             }
 
-            templates.Items[item.MongoId].Properties!.MaxHpResource = item.Value;
+            templates.Items[key].Properties!.MaxHpResource = value;
         }
         
         return Task.CompletedTask;
